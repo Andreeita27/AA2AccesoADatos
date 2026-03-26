@@ -1,0 +1,20 @@
+############################
+# BACKEND (Spring Boot)
+############################
+
+# Compilación / ejecución
+backend/target/
+backend/logs/
+backend/out/
+backend/build/
+
+# Variables de entorno
+backend/.env
+backend/.env.*
+
+# IntelliJ / IDE
+backend/.idea/
+backend/*.iml
+backend/.classpath
+backend/.project
+backend/.settings/
