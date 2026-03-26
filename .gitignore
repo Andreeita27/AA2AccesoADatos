@@ -3,18 +3,18 @@
 ############################
 
 # Compilación / ejecución
-backend/target/
-backend/logs/
-backend/out/
-backend/build/
+target/
+logs/
+out/
+build/
 
 # Variables de entorno
-backend/.env
-backend/.env.*
+.env
+.env.*
 
 # IntelliJ / IDE
-backend/.idea/
-backend/*.iml
-backend/.classpath
-backend/.project
-backend/.settings/
+.idea/
+.iml
+.classpath
+.project
+.settings/
