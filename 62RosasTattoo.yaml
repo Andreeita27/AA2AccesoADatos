@@ -116,6 +116,57 @@ paths:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
 
+  /v2/clients:
+    post:
+      summary: Crea un nuevo cliente en la versión 2.
+      description: Registra un nuevo cliente usando la versión 2 del endpoint. En esta versión se permite informar el número de visitas y la respuesta devuelve también fullName, age y adult.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientV2InDto'
+            examples:
+              example1:
+                summary: Ejemplo 1
+                value:
+                  clientName: Andrea
+                  clientSurname: Fernandez de la Rosa
+                  email: andrea@example.com
+                  phone: "+34 601375656"
+                  birthDate: "1998-01-26"
+                  showPhoto: true
+                  visits: 3
+              example2:
+                summary: Ejemplo 2
+                value:
+                  clientName: Alejandra
+                  clientSurname: Perbech Royan
+                  email: alejandra@example.com
+                  phone: "+34 601070809"
+                  birthDate: "1998-01-23"
+                  showPhoto: true
+                  visits: 5
+      responses:
+        '201':
+          description: Cliente creado correctamente en la versión 2.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientV2Dto'
+        '400':
+          description: Petición no válida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
   /clients/{id}:
     get:
       summary: Devuelve un cliente por su identificador.
@@ -247,6 +298,138 @@ paths:
       responses:
         '204':
           description: Cliente eliminado correctamente.
+        '404':
+          description: Cliente no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+  /v2/clients/{id}:
+    get:
+      summary: Devuelve un cliente por su identificador en la versión 2.
+      description: Devuelve la información de un cliente concreto. En esta versión también se incluyen fullName, age y adult.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            format: int64
+          description: Identificador único del cliente.
+      responses:
+        '200':
+          description: Cliente encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientV2Dto'
+        '404':
+          description: Cliente no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+    put:
+      summary: Actualiza un cliente existente en la versión 2.
+      description: Actualiza los datos de un cliente identificado por su ID. En esta versión también se puede modificar el número de visitas y la respuesta devuelve fullName, age y adult.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            format: int64
+          description: Identificador único del cliente.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientV2InDto'
+            examples:
+              example1:
+                summary: Ejemplo 1
+                value:
+                  clientName: Andrea modificada
+                  clientSurname: Fernandez de la Rosa
+                  email: andrea@example.com
+                  phone: "+34 601375656"
+                  birthDate: "1998-01-26"
+                  showPhoto: true
+                  visits: 4
+              example2:
+                summary: Ejemplo 2
+                value:
+                  clientName: Alejandra modificada
+                  clientSurname: Perbech Royan
+                  email: alejandra@example.com
+                  phone: "+34 601070809"
+                  birthDate: "1998-01-23"
+                  showPhoto: false
+                  visits: 6
+      responses:
+        '200':
+          description: Cliente actualizado correctamente en la versión 2.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientV2Dto'
+        '400':
+          description: Petición no válida.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: Cliente no encontrado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+
+    delete:
+      summary: Elimina un cliente existente en la versión 2.
+      description: Elimina un cliente identificado por su ID. En la versión 2 se devuelve un mensaje de confirmación en lugar de una respuesta vacía.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+            format: int64
+          description: Identificador único del cliente.
+      responses:
+        '200':
+          description: Cliente eliminado correctamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageDto'
+              examples:
+                success:
+                  summary: Eliminación correcta
+                  value:
+                    message: Client deleted successfully
         '404':
           description: Cliente no encontrado.
           content:
@@ -1392,6 +1575,88 @@ components:
         birthDate: "1998-01-26"
         showPhoto: true
         visits: 3
+
+    ClientV2InDto:
+      type: object
+      properties:
+        clientName:
+          type: string
+          description: Nombre del cliente
+        clientSurname:
+          type: string
+          description: Apellidos del cliente
+        email:
+          type: string
+          format: email
+          description: Email del cliente
+        phone:
+          type: string
+          description: Teléfono del cliente
+        birthDate:
+          type: string
+          format: date
+          description: Fecha de nacimiento del cliente
+        showPhoto:
+          type: boolean
+          description: Indica si acepta que se muestren sus tatuajes
+        visits:
+          type: integer
+          format: int32
+          description: Número de visitas realizadas al estudio
+      required:
+        - clientName
+        - clientSurname
+        - email
+      example:
+        clientName: Andrea
+        clientSurname: Fernandez de la Rosa
+        email: andrea@example.com
+        phone: "+34 601375656"
+        birthDate: "1998-01-26"
+        showPhoto: true
+        visits: 3
+
+    ClientV2Dto:
+      allOf:
+        - $ref: '#/components/schemas/ClientV2InDto'
+      type: object
+      properties:
+        id:
+          type: number
+          format: int64
+          description: Identificador único del cliente
+        fullName:
+          type: string
+          description: Nombre completo del cliente
+        age:
+          type: integer
+          format: int32
+          nullable: true
+          description: Edad calculada a partir de la fecha de nacimiento
+        adult:
+          type: boolean
+          description: Indica si el cliente es mayor de edad
+      example:
+        id: 1
+        clientName: Andrea
+        clientSurname: Fernandez de la Rosa
+        email: andrea@example.com
+        phone: "+34 601375656"
+        birthDate: "1998-01-26"
+        showPhoto: true
+        visits: 3
+        fullName: Andrea Fernandez de la Rosa
+        age: 28
+        adult: true
+
+    MessageDto:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Mensaje informativo devuelto por la API
+      example:
+        message: Client deleted successfully
 
     ErrorResponse:
       type: object
