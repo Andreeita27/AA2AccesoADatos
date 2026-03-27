@@ -1,7 +1,6 @@
 package com.svalero.RosasTattoo.controller;
 
-import com.svalero.RosasTattoo.dto.ClientInDto;
-import com.svalero.RosasTattoo.dto.ClientDto;
+import com.svalero.RosasTattoo.dto.*;
 import com.svalero.RosasTattoo.exception.ClientNotFoundException;
 import com.svalero.RosasTattoo.exception.ErrorResponse;
 import com.svalero.RosasTattoo.service.ClientService;
@@ -74,5 +73,31 @@ public class ClientController {
 
         ErrorResponse errorResponse = ErrorResponse.validationError(errors);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+    // VERSION 2
+
+    @GetMapping("/v2/clients/{id}")
+    public ResponseEntity<ClientV2Dto> getClientV2(@PathVariable long id) throws ClientNotFoundException {
+        return ResponseEntity.ok(clientService.findByIdV2(id));
+    }
+
+    @PostMapping("/v2/clients")
+    public ResponseEntity<ClientV2Dto> addClientV2(@Valid @RequestBody ClientV2InDto clientV2InDto) {
+        return new ResponseEntity<>(clientService.addV2(clientV2InDto), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/v2/clients/{id}")
+    public ResponseEntity<ClientV2Dto> modifyClientV2(@PathVariable long id,
+                                                      @Valid @RequestBody ClientV2InDto clientV2InDto)
+            throws ClientNotFoundException {
+        return ResponseEntity.ok(clientService.modifyV2(id, clientV2InDto));
+    }
+
+    @DeleteMapping("/v2/clients/{id}")
+    public ResponseEntity<MessageDto> deleteClientV2(@PathVariable long id) throws ClientNotFoundException {
+        clientService.deleteV2(id);
+        return ResponseEntity.ok(new MessageDto("Client deleted successfully"));
     }
 }
