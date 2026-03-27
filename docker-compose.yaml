@@ -25,7 +25,7 @@ services:
     image: rosas-api
     container_name: rosas-api
     ports:
-      - "8080:8080"
+      - "8090:8080"
     depends_on:
       rosas-db:
         condition: service_healthy
