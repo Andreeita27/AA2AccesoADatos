@@ -1,11 +1,11 @@
-name: rosastattoo
+name: rosastattoov2
 
 services:
   mariadb:
     image: mariadb:11.3.2
-    container_name: rosas-tattoo
+    container_name: rosas-tattoo-v2
     ports:
-      - "3308:3306"
+      - "3310:3306"
     env_file:
       - .env
     environment:
@@ -14,7 +14,7 @@ services:
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - mariadb_data_rosastattoov2:/var/lib/mysql
 
 volumes:
-  mariadb_data:
+  mariadb_data_rosastattoov2:

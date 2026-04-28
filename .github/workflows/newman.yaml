@@ -1,0 +1,22 @@
+name: Integration tests with Newman
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+      - run: mvn package
+      - run: docker build -t rosas-api .
+      - run: docker compose up -d
+      - run: npm install -g newman
+      - run: newman run postman/clients.postman_collection.json -e postman/local.postman_environment.json

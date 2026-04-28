@@ -1,0 +1,547 @@
+{
+  "info": {
+    "_postman_id": "dccff7e0-2483-4532-885c-ccb204992c5a",
+    "name": "AA2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50232739",
+    "_collection_link": "https://go.postman.co/collection/50232739-dccff7e0-2483-4532-885c-ccb204992c5a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "/post ok",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 201\", function () {\r",
+              "    pm.response.to.have.status(201);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\r",
+              "        \"id\",\r",
+              "        \"clientName\",\r",
+              "        \"clientSurname\",\r",
+              "        \"email\",\r",
+              "        \"phone\",\r",
+              "        \"birthDate\",\r",
+              "        \"showPhoto\",\r",
+              "        \"visits\"\r",
+              "    );\r",
+              "\r",
+              "    pm.expect(jsonData.id).to.be.a(\"number\");\r",
+              "    pm.expect(jsonData.clientName).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.clientSurname).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.email).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.phone).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.birthDate).to.be.a(\"string\");\r",
+              "    pm.expect(jsonData.showPhoto).to.be.a(\"boolean\");\r",
+              "    pm.expect(jsonData.visits).to.be.a(\"number\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response values are correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData.clientName).to.eql(\"Andrea\");\r",
+              "    pm.expect(jsonData.clientSurname).to.eql(\"Fernandez\");\r",
+              "    pm.expect(jsonData.email).to.eql(pm.environment.get(\"uniqueEmail\"));\r",
+              "    pm.expect(jsonData.phone).to.eql(\"123456789\");\r",
+              "    pm.expect(jsonData.birthDate).to.eql(\"1998-01-26\");\r",
+              "    pm.expect(jsonData.showPhoto).to.eql(true);\r",
+              "    pm.expect(jsonData.visits).to.eql(0);\r",
+              "});\r",
+              "\r",
+              "pm.environment.set(\"clientId\", pm.response.json().id);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const uniqueEmail = \"andrea+\" + Date.now() + \"@test.com\";\r",
+              "pm.environment.set(\"uniqueEmail\", uniqueEmail);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"clientName\": \"Andrea\",\r\n  \"clientSurname\": \"Fernandez\",\r\n  \"email\": \"{{uniqueEmail}}\",\r\n  \"phone\": \"123456789\",\r\n  \"birthDate\": \"1998-01-26\",\r\n  \"showPhoto\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/clients",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/post 400",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 400\", function () {\r",
+              "    pm.response.to.have.status(400);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Error response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\"code\", \"title\", \"message\", \"errors\");\r",
+              "    pm.expect(jsonData.code).to.eql(400);\r",
+              "    pm.expect(jsonData.title).to.eql(\"bad-request\");\r",
+              "    pm.expect(jsonData.message).to.eql(\"Validation error\");\r",
+              "    pm.expect(jsonData.errors).to.be.an(\"object\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Validation errors are returned\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData.errors.clientName).to.exist;\r",
+              "    pm.expect(jsonData.errors.clientSurname).to.exist;\r",
+              "    pm.expect(jsonData.errors.email).to.exist;\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"clientName\": \"\",\r\n  \"clientSurname\": \"\",\r\n  \"email\": \"\",\r\n  \"phone\": \"123456789\",\r\n  \"birthDate\": \"1998-01-26\",\r\n  \"showPhoto\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/clients",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/get all ok",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response is an array\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData).to.be.an(\"array\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Each client has the correct structure\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    jsonData.forEach(client => {\r",
+              "        pm.expect(client).to.have.all.keys(\r",
+              "            \"id\",\r",
+              "            \"clientName\",\r",
+              "            \"clientSurname\",\r",
+              "            \"email\",\r",
+              "            \"phone\",\r",
+              "            \"birthDate\",\r",
+              "            \"showPhoto\",\r",
+              "            \"visits\"\r",
+              "        );\r",
+              "\r",
+              "        pm.expect(client.id).to.be.a(\"number\");\r",
+              "        pm.expect(client.clientName).to.be.a(\"string\");\r",
+              "        pm.expect(client.clientSurname).to.be.a(\"string\");\r",
+              "        pm.expect(client.email).to.be.a(\"string\");\r",
+              "        pm.expect(client.phone).to.be.a(\"string\");\r",
+              "        pm.expect(client.birthDate).to.be.a(\"string\");\r",
+              "        pm.expect(client.showPhoto).to.be.a(\"boolean\");\r",
+              "        pm.expect(client.visits).to.be.a(\"number\");\r",
+              "    });\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Created client appears in the list\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "    const clientId = Number(pm.environment.get(\"clientId\"));\r",
+              "\r",
+              "    const createdClient = jsonData.find(client => client.id === clientId);\r",
+              "    pm.expect(createdClient).to.exist;\r",
+              "    pm.expect(createdClient.clientName).to.eql(\"Andrea\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/clients",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/get ok",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\r",
+              "        \"id\",\r",
+              "        \"clientName\",\r",
+              "        \"clientSurname\",\r",
+              "        \"email\",\r",
+              "        \"phone\",\r",
+              "        \"birthDate\",\r",
+              "        \"showPhoto\",\r",
+              "        \"visits\"\r",
+              "    );\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Returned client values are correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData.id).to.eql(Number(pm.environment.get(\"clientId\")));\r",
+              "    pm.expect(jsonData.clientName).to.eql(\"Andrea\");\r",
+              "    pm.expect(jsonData.clientSurname).to.eql(\"Fernandez\");\r",
+              "    pm.expect(jsonData.email).to.eql(pm.environment.get(\"uniqueEmail\"));\r",
+              "    pm.expect(jsonData.phone).to.eql(\"123456789\");\r",
+              "    pm.expect(jsonData.birthDate).to.eql(\"1998-01-26\");\r",
+              "    pm.expect(jsonData.showPhoto).to.eql(true);\r",
+              "    pm.expect(jsonData.visits).to.eql(0);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/clients/{{clientId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/get 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Error response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\"code\", \"title\", \"message\", \"errors\");\r",
+              "    pm.expect(jsonData.code).to.eql(404);\r",
+              "    pm.expect(jsonData.title).to.eql(\"not-found\");\r",
+              "    pm.expect(jsonData.message).to.eql(\"Client not found\");\r",
+              "    pm.expect(jsonData.errors).to.be.an(\"object\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/clients/{{missingClientId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients",
+            "{{missingClientId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/put ok",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\r",
+              "        \"id\",\r",
+              "        \"clientName\",\r",
+              "        \"clientSurname\",\r",
+              "        \"email\",\r",
+              "        \"phone\",\r",
+              "        \"birthDate\",\r",
+              "        \"showPhoto\",\r",
+              "        \"visits\"\r",
+              "    );\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Updated client values are correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData.id).to.eql(Number(pm.environment.get(\"clientId\")));\r",
+              "    pm.expect(jsonData.clientName).to.eql(\"Andrea\");\r",
+              "    pm.expect(jsonData.clientSurname).to.eql(\"Fernandez Modificada\");\r",
+              "    pm.expect(jsonData.email).to.eql(\"andrea.updated@test.com\");\r",
+              "    pm.expect(jsonData.phone).to.eql(\"987654321\");\r",
+              "    pm.expect(jsonData.birthDate).to.eql(\"1998-01-26\");\r",
+              "    pm.expect(jsonData.showPhoto).to.eql(false);\r",
+              "    pm.expect(jsonData.visits).to.eql(0);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"clientName\": \"Andrea\",\r\n  \"clientSurname\": \"Fernandez Modificada\",\r\n  \"email\": \"andrea.updated@test.com\",\r\n  \"phone\": \"987654321\",\r\n  \"birthDate\": \"1998-01-26\",\r\n  \"showPhoto\": false\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/clients/{{clientId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/put 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Error response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\"code\", \"title\", \"message\", \"errors\");\r",
+              "    pm.expect(jsonData.code).to.eql(404);\r",
+              "    pm.expect(jsonData.title).to.eql(\"not-found\");\r",
+              "    pm.expect(jsonData.message).to.eql(\"Client not found\");\r",
+              "    pm.expect(jsonData.errors).to.be.an(\"object\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"clientName\": \"Nadie\",\r\n  \"clientSurname\": \"Nadie\",\r\n  \"email\": \"nadie@test.com\",\r\n  \"phone\": \"000000000\",\r\n  \"birthDate\": \"1990-01-01\",\r\n  \"showPhoto\": false\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/clients/{{missingClientId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients",
+            "{{missingClientId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/delete ok",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 204\", function () {\r",
+              "    pm.response.to.have.status(204);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Response body is empty\", function () {\r",
+              "    pm.expect(pm.response.text()).to.eql(\"\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"clientName\": \"Andrea\",\r\n  \"clientSurname\": \"Fernandez Modificada\",\r\n  \"email\": \"andrea.updated@test.com\",\r\n  \"phone\": \"987654321\",\r\n  \"birthDate\": \"1998-01-26\",\r\n  \"showPhoto\": false\r\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/clients/{{clientId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "/delete 404",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 404\", function () {\r",
+              "    pm.response.to.have.status(404);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Error response structure is correct\", function () {\r",
+              "    const jsonData = pm.response.json();\r",
+              "\r",
+              "    pm.expect(jsonData).to.have.all.keys(\"code\", \"title\", \"message\", \"errors\");\r",
+              "    pm.expect(jsonData.code).to.eql(404);\r",
+              "    pm.expect(jsonData.title).to.eql(\"not-found\");\r",
+              "    pm.expect(jsonData.message).to.eql(\"Client not found\");\r",
+              "    pm.expect(jsonData.errors).to.be.an(\"object\");\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"clientName\": \"Andrea\",\r\n  \"clientSurname\": \"Fernandez Modificada\",\r\n  \"email\": \"andrea.updated@test.com\",\r\n  \"phone\": \"987654321\",\r\n  \"birthDate\": \"1998-01-26\",\r\n  \"showPhoto\": false\r\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/clients/{{clientId}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "clients",
+            "{{clientId}}"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
